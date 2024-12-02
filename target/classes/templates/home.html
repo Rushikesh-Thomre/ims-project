@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="/css/home.css" th:href="@{/css/home.css}"/>
+    <link rel="stylesheet" type="text/css" href="/css/nav.css" th:href="@{/css/nav.css}"/>
+</head>
+<body>
+<nav id="nav">
+    <ul>
+        <li class="selected">
+            <a th:href="@{/}">DASHBOARD</a>
+        </li>
+        <li>
+            <a th:href="@{/item-list}">ITEMS</a>
+        </li>
+        <li>
+            <a th:href="@{/supplier-list}">SUPPLIERS</a>
+        </li>
+        <li>
+            <a th:href="@{/client-list}">CUSTOMERS</a>
+        </li>
+    </ul>
+    <h1>INVENTORY</h1>
+    <div>
+        <a th:href="@{/logout}" class="logOut_btn">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <p>Welcome! <span sec:authentication="principal.username">User</span></p>
+</div>
+<div id="container">
+    <div class="side-by-side">
+        <div>
+            <div>
+                <h3>Total Items</h3>
+                <p><span th:text="${totalItems}"></span></p>
+            </div>
+            <div>
+                <h3>Number of Suppliers</h3>
+                <p><span th:text="${totalSuppliers}"></span></p>
+            </div>
+            <div>
+                <h3>Number of Customers</h3>
+                <p><span th:text="${totalCustomers}"></span></p>
+            </div>
+        </div>
+        <div>
+            <div>
+                <h3>Quantity In Hand</h3>
+                <p><span th:text="${totalQuantity}"></span></p>
+            </div>
+            <div>
+                <h3>Total Expenditure</h3>
+                <p>LKR <span th:text="${#numbers.formatDecimal(totalExpenditure, 0, 'COMMA', 2, 'POINT')}"></span></p>
+            </div>
+            <div>
+                <h3>Total Revenue</h3>
+                <p>LKR <span th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 2, 'POINT')}"></span></p>
+            </div>
+            
+        </div>
+    </div>
+    <div class="horizontal">
+        <div>
+            <h3>Total Projected Income</h3>
+        </div>
+        <div class="vir-line"></div>
+        <div>
+            <p>LKR <span th:text="${#numbers.formatDecimal(totalProjectedIncome, 0, 'COMMA', 2, 'POINT')}"></span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Stock Management Section (Stock In/Out) -->
+<div id="stock-management">
+    <h2>Manage Stock</h2>
+
+    <!-- Stock In/Out Form -->
+    <form id="stockForm">
+        <div>
+            <label for="item">Item:</label>
+            <select id="item" name="item" required></select>
+        </div>
+
+        <div>
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" min="1" required />
+        </div>
+
+        <div>
+            <label for="action">Action:</label>
+            <select id="action" name="action">
+                <option value="in">Stock In</option>
+                <option value="out">Stock Out</option>
+            </select>
+        </div>
+
+        <div>
+            <button type="button" id="submitStockAction">Submit</button>
+        </div>
+    </form>
+
+    <h3>Current Stock</h3>
+    <table id="stockTable">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Stock Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dynamically populate current stock here -->
+        </tbody>
+    </table>
+    <div>
+    <a class="btn" th:href="@{/report}">Report</a>
+    <!-- Add Invoice Button -->
+    <!--<a class="btn" href="Invoice.html">Invoice</a>-->
+    <a class="btn" th:href="@{/Invoice.html}">Invoice</a>
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+<script>
+// Fetch all items and populate the dropdown
+fetch('/api/stock/items')
+    .then(response => response.json())
+    .then(data => {
+        const itemSelect = document.getElementById('item');
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.itemId;
+            option.textContent = item.itemName;
+            itemSelect.appendChild(option);
+        });
+    });
+
+// Handle form submission to update stock
+document.getElementById('submitStockAction').addEventListener('click', function () {
+    const itemId = document.getElementById('item').value;
+    const quantity = parseInt(document.getElementById('quantity').value, 10);
+    const action = document.getElementById('action').value;
+
+    fetch(`/api/stock/update/${itemId}?quantity=${quantity}&action=${action}`, {
+        method: 'PUT'
+    })
+    .then(response => response.json())
+    .then(updatedItem => {
+        alert(`Stock Updated: ${updatedItem.itemName} - Quantity: ${updatedItem.quantity}`);
+        // Optionally, update the stock table here
+    })
+    .catch(error => console.error('Error updating stock:', error));
+});
+</script>
+<script>
+// Fetch all items and populate the dropdown
+fetch('/api/stock/items')
+    .then(response => response.json())
+    .then(data => {
+        const itemSelect = document.getElementById('item');
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.itemId;
+            option.textContent = item.itemName;
+            itemSelect.appendChild(option);
+        });
+    });
+
+// Handle form submission to update stock
+document.getElementById('submitStockAction').addEventListener('click', function () {
+    const itemId = document.getElementById('item').value;
+    const quantity = parseInt(document.getElementById('quantity').value, 10);
+    const action = document.getElementById('action').value;
+
+    if (!itemId || !quantity || isNaN(quantity)) {
+        alert("Please fill in all fields correctly.");
+        return;
+    }
+
+    fetch(`/api/stock/update/${itemId}?quantity=${quantity}&action=${action}`, {
+        method: 'PUT'
+    })
+    .then(response => response.json())
+    .then(updatedItem => {
+        alert(`Stock Updated: ${updatedItem.itemName} - Quantity: ${updatedItem.quantity}`);
+        
+        // Optionally, update the stock table here
+        updateStockTable(updatedItem);
+    })
+    .catch(error => {
+        console.error('Error updating stock:', error);
+        alert('Failed to update stock.');
+    });
+});
+
+// Function to update the stock table after a successful update
+function updateStockTable(updatedItem) {
+    const stockTableBody = document.getElementById('stockTable').getElementsByTagName('tbody')[0];
+    
+    // Find if the item already exists in the table
+    let row = Array.from(stockTableBody.rows).find(row => row.cells[0].textContent === updatedItem.itemName);
+
+    if (row) {
+        // If item exists, update the quantity
+        row.cells[1].textContent = updatedItem.quantity;
+    } else {
+        // If item doesn't exist, add a new row
+        const newRow = stockTableBody.insertRow();
+        newRow.insertCell(0).textContent = updatedItem.itemName;
+        newRow.insertCell(1).textContent = updatedItem.quantity;
+    }
+}
+</script>
+
+
+<div>
+    <!--<a class="btn" th:href="@{report}">Report</a>-->
+</div>
+<footer>
+    <div>
+        <h3>About</h3>
+        <p>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text ever
+            since the 1500s, when an unknown printer took a galley of type and
+            scrambled it to make a type specimen book. It has survived not only
+            five centuries, but also the leap into electronic typesetting,
+            remaining essentially unchanged.
+        </p>
+    </div>
+    <h2>INVENTORY</h2>
+    <ul>
+        <li><a href="" #>PRIVACY POLICY</a></li>
+        <li><a href="" #>TERMS OF USE</a></li>
+        <li><a href="" #>CONTACT US</a></li>
+        <li><a href="" #>FAQ</a></li>
+    </ul>
+</footer>
+</body>
+</html>

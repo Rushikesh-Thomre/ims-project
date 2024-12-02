@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+	/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.scanner-container {
+    text-align: center;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+}
+
+#camera-container {
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    background-color: #007bff;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#reader {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #ccc;
+}
+
+#result {
+    background-color: #eaf4e7;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 20px;
+    text-align: left;
+    font-size: 16px;
+    word-wrap: break-word;
+}
+
+</style>
+<body>
+    <div class="scanner-container">
+        <h1>QR Code Scanner</h1>
+
+        <!-- Camera Field -->
+        <div id="camera-container">
+            <button id="start-camera">Turn On Camera</button>
+            <button id="stop-camera" style="display: none;">Turn Off Camera</button>
+            <div id="reader" style="display: none;"></div>
+        </div>
+
+        <!-- Item Information Display -->
+        <div id="result">
+            <h2>Item Details:</h2>
+            <pre id="item-details">Scan a QR Code to see the item details here.</pre>
+        </div>
+    </div>
+
+    <script >
+		// script.js
+let html5QrCode;
+const readerElement = document.getElementById("reader");
+const startCameraBtn = document.getElementById("start-camera");
+const stopCameraBtn = document.getElementById("stop-camera");
+const itemDetailsElement = document.getElementById("item-details");
+
+// Function to fetch item details from the server
+async function fetchItemDetails(qrCode) {
+    try {
+        const response = await fetch(`/api/item/${qrCode}`); // Replace with your backend endpoint
+        if (!response.ok) {
+            throw new Error("Item not found");
+        }
+        const data = await response.json();
+
+        // Display item details
+        itemDetailsElement.textContent = `
+            Item ID: ${data.itemId}
+            Name: ${data.itemName}
+            Supplier: ${data.supplier.supplierName}
+            Description: ${data.description}
+            Sell Price: ${data.sellPrice}
+            Quantity: ${data.quantity}
+        `;
+    } catch (error) {
+        itemDetailsElement.textContent = error.message;
+    }
+}
+
+// Start the camera
+startCameraBtn.addEventListener("click", () => {
+    readerElement.style.display = "block";
+    startCameraBtn.style.display = "none";
+    stopCameraBtn.style.display = "inline-block";
+
+    html5QrCode = new Html5Qrcode("reader");
+
+    html5QrCode.start(
+        { facingMode: "environment" }, // Use the back camera
+        { fps: 10, qrbox: 250 },
+        (decodedText) => {
+            // When QR Code is successfully scanned
+            fetchItemDetails(decodedText);
+        }
+    ).catch((err) => {
+        console.error("Unable to start the camera", err);
+    });
+});
+
+// Stop the camera
+stopCameraBtn.addEventListener("click", () => {
+    if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+            html5QrCode.clear();
+            readerElement.style.display = "none";
+            startCameraBtn.style.display = "inline-block";
+            stopCameraBtn.style.display = "none";
+        }).catch((err) => {
+            console.error("Unable to stop the camera", err);
+        });
+    }
+});
+
+	</script>
+</body>
+</html>

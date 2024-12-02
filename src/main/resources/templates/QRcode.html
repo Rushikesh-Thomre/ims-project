@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Item QR Code Generator</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<style>
+  /* General Body Style */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Container Style */
+.container {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Header Style */
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+/* Form Group Style */
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* Label Style */
+label {
+  display: block;
+  color: #555;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+/* Input and Textarea Style */
+input, textarea {
+  width: calc(100% - 16px);
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+/* Textarea Style (for description) */
+textarea {
+  height: 60px;
+}
+
+/* Search Bar Style (for item ID search) */
+#searchItemId {
+  margin-bottom: 20px;
+}
+
+/* Button Style */
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* QR Code Box Style */
+.qr-box {
+  margin-top: 20px;
+}
+
+/* Item Info Form Style (read-only fields) */
+#itemInfo input {
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  color: #333;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+#itemInfo label {
+  color: #555;
+  font-weight: bold;
+}
+
+/* Responsive Design: Adjust for smaller screens */
+@media (max-width: 600px) {
+  .container {
+    width: 90%;
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+</style>
+<body>
+  <div class="container">
+    <h1>Item QR Code Generator</h1>
+    
+    <!-- Search Item by ID -->
+    <div class="form-group">
+      <label for="searchItemId">Search Item by ID:</label>
+      <input type="text" id="searchItemId" placeholder="Enter item ID">
+    </div>
+    <button id="searchBtn">Search Item</button>
+
+    <div class="form-group" id="itemInfo">
+      <label for="itemName">Item Name:</label>
+      <input type="text" id="itemName" placeholder="Item Name" readonly>
+
+      <label for="itemId">Item ID:</label>
+      <input type="text" id="itemId" placeholder="Item ID" readonly>
+
+      <label for="itemPrice">Price:</label>
+      <input type="text" id="itemPrice" placeholder="Price" readonly>
+
+      <label for="itemQuantity">Quantity:</label>
+      <input type="text" id="itemQuantity" placeholder="Quantity" readonly>
+    </div>
+
+    <button id="generateBtn">Generate QR Code</button>
+    <div id="qrCode" class="qr-box"></div>
+  </div>
+
+  <script>
+    // Example inventory data (this could come from a database or API)
+    const inventory = [
+      { name: "Item A", id: "1001", price: "$10", quantity: 50 },
+      { name: "Item B", id: "1002", price: "$20", quantity: 30 },
+      { name: "Item C", id: "1003", price: "$30", quantity: 20 },
+    ];
+
+    // Search button click event
+    document.getElementById('searchBtn').addEventListener('click', function () {
+      const itemId = document.getElementById('searchItemId').value.trim();
+
+      if (!itemId) {
+        alert("Please enter an Item ID.");
+        return;
+      }
+
+      // Search for item by ID
+      const item = inventory.find(item => item.id === itemId);
+
+      if (item) {
+        // Autofill item details
+        document.getElementById('itemName').value = item.name;
+        document.getElementById('itemId').value = item.id;
+        document.getElementById('itemPrice').value = item.price;
+        document.getElementById('itemQuantity').value = item.quantity;
+      } else {
+        alert("Item not found.");
+      }
+    });
+
+    // Generate QR Code button click event
+    document.getElementById('generateBtn').addEventListener('click', function () {
+      // Get item details from the input fields
+      const itemName = document.getElementById('itemName').value;
+      const itemId = document.getElementById('itemId').value;
+      const itemPrice = document.getElementById('itemPrice').value;
+      const itemQuantity = document.getElementById('itemQuantity').value;
+
+      // Validate input
+      if (!itemName || !itemId || !itemPrice || !itemQuantity) {
+        alert('Please search for a valid item first.');
+        return;
+      }
+
+      // Create QR code content
+      const qrData = `
+        Item Name: ${itemName}
+        Item ID: ${itemId}
+        Price: ${itemPrice}
+        Quantity: ${itemQuantity}
+      `;
+
+      // Clear previous QR code
+      const qrCodeContainer = document.getElementById('qrCode');
+      qrCodeContainer.innerHTML = '';
+
+      // Generate QR code
+      new QRCode(qrCodeContainer, {
+        text: qrData,
+        width: 200,
+        height: 200,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+      });
+    });
+  </script>
+</body>
+</html>
