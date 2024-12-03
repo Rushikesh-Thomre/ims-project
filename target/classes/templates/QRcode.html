@@ -8,7 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <style>
-  /* General Body Style */
+
 body {
   font-family: Arial, sans-serif;
   background-color: #f4f4f9;
@@ -20,7 +20,7 @@ body {
   height: 100vh;
 }
 
-/* Container Style */
+
 .container {
   background: #ffffff;
   padding: 20px;
@@ -31,20 +31,18 @@ body {
   text-align: center;
 }
 
-/* Header Style */
+
 h1 {
   color: #333;
   margin-bottom: 20px;
   font-size: 24px;
 }
 
-/* Form Group Style */
 .form-group {
   margin-bottom: 15px;
   text-align: left;
 }
 
-/* Label Style */
 label {
   display: block;
   color: #555;
@@ -52,7 +50,6 @@ label {
   font-size: 14px;
 }
 
-/* Input and Textarea Style */
 input, textarea {
   width: calc(100% - 16px);
   padding: 8px;
@@ -62,17 +59,14 @@ input, textarea {
   margin-bottom: 10px;
 }
 
-/* Textarea Style (for description) */
 textarea {
   height: 60px;
 }
 
-/* Search Bar Style (for item ID search) */
 #searchItemId {
   margin-bottom: 20px;
 }
 
-/* Button Style */
 button {
   background-color: #007bff;
   color: white;
@@ -88,12 +82,10 @@ button:hover {
   background-color: #0056b3;
 }
 
-/* QR Code Box Style */
 .qr-box {
   margin-top: 20px;
 }
 
-/* Item Info Form Style (read-only fields) */
 #itemInfo input {
   background-color: #f1f1f1;
   border: 1px solid #ddd;
@@ -107,7 +99,6 @@ button:hover {
   font-weight: bold;
 }
 
-/* Responsive Design: Adjust for smaller screens */
 @media (max-width: 600px) {
   .container {
     width: 90%;
@@ -129,7 +120,6 @@ button:hover {
   <div class="container">
     <h1>Item QR Code Generator</h1>
     
-    <!-- Search Item by ID -->
     <div class="form-group">
       <label for="searchItemId">Search Item by ID:</label>
       <input type="text" id="searchItemId" placeholder="Enter item ID">
@@ -155,14 +145,12 @@ button:hover {
   </div>
 
   <script>
-    // Example inventory data (this could come from a database or API)
     const inventory = [
       { name: "Item A", id: "1001", price: "$10", quantity: 50 },
       { name: "Item B", id: "1002", price: "$20", quantity: 30 },
       { name: "Item C", id: "1003", price: "$30", quantity: 20 },
     ];
 
-    // Search button click event
     document.getElementById('searchBtn').addEventListener('click', function () {
       const itemId = document.getElementById('searchItemId').value.trim();
 
@@ -171,11 +159,9 @@ button:hover {
         return;
       }
 
-      // Search for item by ID
       const item = inventory.find(item => item.id === itemId);
 
       if (item) {
-        // Autofill item details
         document.getElementById('itemName').value = item.name;
         document.getElementById('itemId').value = item.id;
         document.getElementById('itemPrice').value = item.price;
@@ -185,21 +171,17 @@ button:hover {
       }
     });
 
-    // Generate QR Code button click event
     document.getElementById('generateBtn').addEventListener('click', function () {
-      // Get item details from the input fields
       const itemName = document.getElementById('itemName').value;
       const itemId = document.getElementById('itemId').value;
       const itemPrice = document.getElementById('itemPrice').value;
       const itemQuantity = document.getElementById('itemQuantity').value;
 
-      // Validate input
       if (!itemName || !itemId || !itemPrice || !itemQuantity) {
         alert('Please search for a valid item first.');
         return;
       }
 
-      // Create QR code content
       const qrData = `
         Item Name: ${itemName}
         Item ID: ${itemId}
@@ -207,11 +189,9 @@ button:hover {
         Quantity: ${itemQuantity}
       `;
 
-      // Clear previous QR code
       const qrCodeContainer = document.getElementById('qrCode');
       qrCodeContainer.innerHTML = '';
 
-      // Generate QR code
       new QRCode(qrCodeContainer, {
         text: qrData,
         width: 200,

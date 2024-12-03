@@ -3,153 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Scanner</title>
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<style>
-	/* styles.css */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+    <title> QR Code Scanner</title>
+    <style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background: linear-gradient(135deg, #1e1e2f, #282c34);
+        color: #fff;
+        display: flex;
+        height: 100vh;
+        margin: 0;
+        overflow: hidden;
+    }
 
-.scanner-container {
-    text-align: center;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    width: 90%;
-    max-width: 600px;
-}
+    .webcam-container {
+        flex: 1;
+        text-align: center;
+        background: rgba(40, 44, 52, 0.95);
+        padding: 20px;
+        border-right: 2px solid #444;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        animation: slideInLeft 1s ease-in-out;
+    }
 
-#camera-container {
-    margin-bottom: 20px;
-}
+    button {
+        padding: 12px 25px;
+        font-size: 18px;
+        background: linear-gradient(45deg, #007bff, #0056b3);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        margin: 10px 5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
 
-button {
-    padding: 10px 20px;
-    margin: 10px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    color: white;
-    background-color: #007bff;
-}
+    button:hover {
+        background: linear-gradient(45deg, #0056b3, #007bff);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
 
-button:hover {
-    background-color: #0056b3;
-}
+    video {
+        margin: 20px auto;
+        width: 80%;
+        max-width: 400px;
+        border: 3px solid #61dafb;
+        border-radius: 10px;
+        animation: zoomIn 0.8s ease-out;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
 
-#reader {
-    margin: 0 auto;
-    width: 100%;
-    max-width: 400px;
-    border: 1px solid #ccc;
-}
+    .info-container {
+        flex: 1;
+        background: rgba(34, 34, 34, 0.95);
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        overflow-y: auto;
+        animation: slideInRight 1s ease-in-out;
+        border-left: 2px solid #444;
+    }
 
-#result {
-    background-color: #eaf4e7;
-    padding: 15px;
-    border-radius: 5px;
-    margin-top: 20px;
-    text-align: left;
-    font-size: 16px;
-    word-wrap: break-word;
-}
+    .info-container h2 {
+        width: 100%;
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #61dafb;
+        text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+    }
 
+    .info-detail {
+        background: rgba(51, 51, 51, 0.9);
+        padding: 20px;
+        margin: 15px 0;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 0.8s ease;
+        font-size: 18px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .info-detail:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0));
+        opacity: 0.1;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .info-detail span {
+        color: #61dafb;
+        font-weight: bold;
+    }
+
+    /* Scrollbar */
+    .info-container::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .info-container::-webkit-scrollbar-thumb {
+        background: #61dafb;
+        border-radius: 5px;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes zoomIn {
+        from {
+            transform: scale(0.9);
+        }
+        to {
+            transform: scale(1);
+        }
+    }
 </style>
+
+</head>
 <body>
-    <div class="scanner-container">
+    <div class="webcam-container">
         <h1>QR Code Scanner</h1>
-
-        <!-- Camera Field -->
-        <div id="camera-container">
-            <button id="start-camera">Turn On Camera</button>
-            <button id="stop-camera" style="display: none;">Turn Off Camera</button>
-            <div id="reader" style="display: none;"></div>
-        </div>
-
-        <!-- Item Information Display -->
-        <div id="result">
-            <h2>Item Details:</h2>
-            <pre id="item-details">Scan a QR Code to see the item details here.</pre>
-        </div>
+        <button id="start-webcam">Turn On WebCam</button>
+        <button id="stop-webcam" style="display: none;">Turn Off WebCam</button>
+        <video id="video" autoplay style="display: none;"></video>
     </div>
 
-    <script >
-		// script.js
-let html5QrCode;
-const readerElement = document.getElementById("reader");
-const startCameraBtn = document.getElementById("start-camera");
-const stopCameraBtn = document.getElementById("stop-camera");
-const itemDetailsElement = document.getElementById("item-details");
+    <div class="info-container">
+        <h2>Scanned Information</h2>
+        <div id="info-list"></div>
+    </div>
 
-// Function to fetch item details from the server
-async function fetchItemDetails(qrCode) {
-    try {
-        const response = await fetch(`/api/item/${qrCode}`); // Replace with your backend endpoint
-        if (!response.ok) {
-            throw new Error("Item not found");
+    <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+    <script>
+        const startWebcamButton = document.getElementById("start-webcam");
+        const stopWebcamButton = document.getElementById("stop-webcam");
+        const videoElement = document.getElementById("video");
+        const infoList = document.getElementById("info-list");
+
+        let stream;
+        let scanning = false;
+
+        function startFrontCamera() {
+            navigator.mediaDevices
+                .getUserMedia({ video: { facingMode: "user" } })
+                .then((cameraStream) => {
+                    stream = cameraStream;
+                    videoElement.srcObject = stream;
+                    videoElement.style.display = "block";
+                    startWebcamButton.style.display = "none";
+                    stopWebcamButton.style.display = "inline-block";
+                    scanning = true;
+                    scanQRCode();
+                })
+                .catch((err) => {
+                    console.error("Error accessing the front camera:", err);
+                    alert("Unable to access the camera. Please check permissions.");
+                });
         }
-        const data = await response.json();
 
-        // Display item details
-        itemDetailsElement.textContent = `
-            Item ID: ${data.itemId}
-            Name: ${data.itemName}
-            Supplier: ${data.supplier.supplierName}
-            Description: ${data.description}
-            Sell Price: ${data.sellPrice}
-            Quantity: ${data.quantity}
-        `;
-    } catch (error) {
-        itemDetailsElement.textContent = error.message;
-    }
-}
-
-// Start the camera
-startCameraBtn.addEventListener("click", () => {
-    readerElement.style.display = "block";
-    startCameraBtn.style.display = "none";
-    stopCameraBtn.style.display = "inline-block";
-
-    html5QrCode = new Html5Qrcode("reader");
-
-    html5QrCode.start(
-        { facingMode: "environment" }, // Use the back camera
-        { fps: 10, qrbox: 250 },
-        (decodedText) => {
-            // When QR Code is successfully scanned
-            fetchItemDetails(decodedText);
+        function stopFrontCamera() {
+            if (stream) {
+                stream.getTracks().forEach((track) => track.stop());
+                videoElement.srcObject = null;
+                videoElement.style.display = "none";
+                stopWebcamButton.style.display = "none";
+                startWebcamButton.style.display = "inline-block";
+                scanning = false;
+                infoList.innerHTML = '';
+            }
         }
-    ).catch((err) => {
-        console.error("Unable to start the camera", err);
-    });
-});
 
-// Stop the camera
-stopCameraBtn.addEventListener("click", () => {
-    if (html5QrCode) {
-        html5QrCode.stop().then(() => {
-            html5QrCode.clear();
-            readerElement.style.display = "none";
-            startCameraBtn.style.display = "inline-block";
-            stopCameraBtn.style.display = "none";
-        }).catch((err) => {
-            console.error("Unable to stop the camera", err);
-        });
-    }
-});
+        function scanQRCode() {
+            if (!scanning) return;
 
-	</script>
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+
+            canvas.width = videoElement.videoWidth || 640;
+            canvas.height = videoElement.videoHeight || 480;
+
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+            const qrCode = jsQR(imageData.data, canvas.width, canvas.height);
+
+            if (qrCode) {
+                const data = qrCode.data;
+
+                // Example QR data: "Item ID: 3, Name: Sony Bravia, Supplier: Amit Pawar, Description: This is Android Tv Sony, Sell Price: 100000.00, Quantity: 11"
+                const items = data.split(', '); // Split based on ', '
+                const formattedData = items.map((item) => item.trim());
+
+                displayInfoOneByOne(formattedData);
+                scanning = false; // Stop scanning after successful detection
+            } else {
+                console.log("No QR code detected");
+            }
+
+            if (scanning) {
+                setTimeout(scanQRCode, 100);
+            }
+        }
+
+        function displayInfoOneByOne(data) {
+            infoList.innerHTML = ''; // Clear existing data
+            let index = 0;
+
+            function showNextDetail() {
+                if (index < data.length) {
+                    const detail = document.createElement('div');
+                    detail.className = 'info-detail';
+                    detail.textContent = data[index];
+                    infoList.appendChild(detail);
+
+                    index++;
+                    setTimeout(showNextDetail, 1500); // Delay before showing next detail
+                }
+            }
+
+            showNextDetail(); // Start displaying details
+        }
+
+        startWebcamButton.addEventListener("click", startFrontCamera);
+        stopWebcamButton.addEventListener("click", stopFrontCamera);
+    </script>
 </body>
 </html>

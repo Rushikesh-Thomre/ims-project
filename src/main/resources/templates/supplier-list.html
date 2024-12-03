@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Suppliers</title>
 
-    <!-- Include CSS stylesheets using Thymeleaf expressions -->
     <link rel="stylesheet" type="text/css" href="/css/supplier-client-list.css"
           th:href="@{/css/supplier-client-list.css}"/>
     <link rel="stylesheet" type="text/css" href="/css/nav.css" th:href="@{/css/nav.css}"/>
 </head>
 <body>
-<!-- Navigation Section -->
 <nav id="nav">
     <ul>
         <li>
@@ -27,18 +25,16 @@
             <a th:href="@{/client-list}">CUSTOMERS</a>
         </li>
     </ul>
-    <h1>INVENTORA</h1>
+    <h1>INVENTORY</h1>
     <div>
         <a th:href="@{/logout}" class="logOut_btn">Logout</a>
     </div>
 </nav>
 <div id="container">
-    <!-- New Supplier Button -->
     <div id="new-btn-bar">
         <h1>Supplier List</h1>
         <a th:href="@{/add-supplier}" id="add-new-btn">Add New</a>
     </div>
-    <!-- Supplier List -->
     <div id="supplier-list" th:each="supplier :${supplierList}">
         <div id="supplier">
             <div>
@@ -56,7 +52,6 @@
         </div>
     </div>
 </div>
-<!-- Footer Section -->
 <footer>
     <div>
         <h3>About</h3>
@@ -69,7 +64,7 @@
             remaining essentially unchanged.
         </p>
     </div>
-    <h2>INVENTORA</h2>
+    <h2>INVENTORY</h2>
     <ul>
         <li><a href="" #>PRIVACY POLICY</a></li>
         <li><a href="" #>TERMS OF USE</a></li>

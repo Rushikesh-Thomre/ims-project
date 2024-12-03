@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Show Item</title>
 
-    <!-- Include CSS stylesheets using Thymeleaf expressions -->
     <link rel="stylesheet" type="text/css" href="/css/view-item.css" th:href="@{/css/view-item.css}"/>
     <link rel="stylesheet" type="text/css" href="/css/nav.css" th:href="@{/css/nav.css}"/>
 </head>
 <body>
-<!-- Navigation Section -->
 <nav id="nav">
     <ul>
         <li>
@@ -26,13 +24,12 @@
             <a th:href="@{/client-list}">CUSTOMERS</a>
         </li>
     </ul>
-    <h1>INVENTORA</h1>
+    <h1>INVENTORY</h1>
     <div>
         <a th:href="@{/logout}" class="logOut_btn">Logout</a>
     </div>
 </nav>
 <div id="container" th:object="${item}">
-    <!-- Item Details -->
     <h1 th:text="${item.itemName}">Item Name</h1>
     <div class="item">
         <p class="info" th:text="${item.description}">Item information</p>
@@ -51,7 +48,6 @@
         </div>
     </div>
 </div>
-<!-- Footer Section -->
 <footer>
     <div>
         <h3>About</h3>
@@ -64,7 +60,7 @@
             remaining essentially unchanged.
         </p>
     </div>
-    <h2>INVENTORA</h2>
+    <h2>INVENTORY</h2>
     <ul>
         <li><a href="" #>PRIVACY POLICY</a></li>
         <li><a href="" #>TERMS OF USE</a></li>
